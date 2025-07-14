@@ -142,6 +142,20 @@ sudo chown -R reporter:reporter /var/log/financial-reporter
 
 ## 🔄 更新部署
 
+### 方式1：一键更新脚本（推荐）
+```bash
+# 在服务器上运行更新脚本
+sudo bash deploy/update.sh
+```
+
+**更新脚本会自动：**
+- ✅ 备份当前版本
+- ✅ 拉取最新代码
+- ✅ 更新依赖包
+- ✅ 测试运行
+- ✅ 失败时自动回滚
+
+### 方式2：手动更新
 ```bash
 # 1. 备份当前版本
 sudo cp -r /opt/financial-reporter /opt/financial-reporter.backup
@@ -153,8 +167,8 @@ sudo -u reporter git pull
 # 3. 更新依赖
 sudo -u reporter bash -c 'source .venv/bin/activate && uv sync'
 
-# 4. 重启 cron（如果需要）
-sudo systemctl restart cron
+# 4. 测试运行
+sudo -u reporter bash -c 'source .venv/bin/activate && python scripts/run.py'
 ```
 
 ---
