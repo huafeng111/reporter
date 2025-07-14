@@ -1,0 +1,5 @@
+# 金融新闻报告器定时任务
+# 每天北京时间上午10点执行（UTC 时间 02:00）
+0 2 * * * root cd /app && .venv/bin/python scripts/run.py >> /var/log/financial-reporter/daily.log 2>&1
+
+# 空行（cron 要求） 

@@ -1,0 +1,20 @@
+[project]
+name = "financial-reporter"
+version = "0.1.0"
+description = "AI-powered financial news reporter that sends summaries to Slack"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/reporter", "config"]
+
+[tool.uv]
+dev-dependencies = [] 

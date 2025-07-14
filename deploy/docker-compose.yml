@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  financial-reporter:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: financial-reporter
+    restart: unless-stopped
+    environment:
+      # 从 .env 文件加载环境变量
+      - API_KEY=${API_KEY}
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - AI_URL=${AI_URL:-https://api.bochaai.com/v1/ai-search}
+      - DEFAULT_QUERY=${DEFAULT_QUERY:-总结昨天的美股金融财经新闻}
+      - FRESHNESS=${FRESHNESS:-oneDay}
+      - COUNT=${COUNT:-50}
+      - ANSWER=${ANSWER:-True}
+      - STREAM=${STREAM:-False}
+    volumes:
+      # 挂载日志目录
+      - ./logs:/var/log/financial-reporter
+      # 挂载配置文件（如果需要运行时修改）
+      - ../.env:/app/.env:ro
+    networks:
+      - reporter-network
+
+networks:
+  reporter-network:
+    driver: bridge
+
+volumes:
+  logs:
+    driver: local 
