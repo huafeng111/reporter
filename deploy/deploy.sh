@@ -112,11 +112,14 @@ chown $SERVICE_USER:$SERVICE_USER /var/log/$PROJECT_NAME
 
 echo -e "${YELLOW}设置定时任务...${NC}"
 # 创建 cron 任务 - 每天北京时间上午10点执行（UTC+8，所以 UTC 时间是 02:00）
-crontab -u $SERVICE_USER << EOF
+cat > /tmp/crontab_tmp << EOF
 # 每天北京时间上午10点执行金融新闻报告
 0 2 * * * cd $PROJECT_DIR && .venv/bin/python scripts/run.py >> /var/log/$PROJECT_NAME/daily.log 2>&1
-
 EOF
+
+# 安装定时任务
+crontab -u $SERVICE_USER /tmp/crontab_tmp
+rm -f /tmp/crontab_tmp
 
 echo -e "${YELLOW}启动 cron 服务...${NC}"
 systemctl enable cron
