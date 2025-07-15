@@ -11,8 +11,9 @@
    - 可访问互联网
 
 2. **必需信息**：
-   - AI API Key
-   - Slack Webhook URL
+   - BochaAI API Key（用于网络搜索）
+   - DeepSeek API Key（用于AI分析）
+   - Slack Webhook URL（用于消息通知）
 
 ## 🎯 一键部署（推荐）
 
@@ -35,7 +36,8 @@ sudo bash deploy/deploy.sh
 ```
 
 **脚本会提示你输入：**
-- API Key: `sk-5e0289f81a964b09bba95a06cff8f711`
+- BochaAI API Key: `sk-5e0289f81a964b09bba95a06cff8f711`
+- DeepSeek API Key: `sk-your-deepseek-api-key`  
 - Slack Webhook URL: `https://hooks.slack.com/services/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`
 
 部署完成后会自动配置：
