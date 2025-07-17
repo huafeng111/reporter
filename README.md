@@ -8,13 +8,17 @@ AI-powered financial news reporter that fetches summaries from AI API and sends 
 reporter/
 ├── src/
 │   └── reporter/
-│       ├── main.py          # 主程序
-│       ├── ai_service.py    # AI API 服务
-│       └── slack_service.py # Slack 服务
+│       ├── agents/          # Agent系统
+│       │   ├── base_agent.py      # 基础Agent类
+│       │   └── financial_agent.py # 财经新闻Agent
+│       ├── agent_factory.py       # Agent工厂
+│       ├── task_scheduler.py      # 任务调度器
+│       └── slack_service.py       # Slack 服务
 ├── config/
-│   └── config.py           # 配置管理
+│   ├── config.py           # 基础配置管理
+│   └── tasks.yaml          # 任务配置文件
 ├── scripts/
-│   └── run.py             # 运行脚本
+│   └── run_agents.py       # Agent系统运行脚本
 ├── deploy/                # 部署配置
 │   ├── deploy.sh          # 自动部署脚本
 │   ├── Dockerfile         # Docker 配置
@@ -80,25 +84,28 @@ COUNT=50
 
 ## 使用方法
 
-### 方式1: 使用运行脚本（推荐）
+### 新的Agent系统（推荐）
 
 ```bash
-python scripts/run.py
+# 执行所有查询任务
+python scripts/run_agents.py
+
+# 执行特定查询
+python scripts/run_agents.py --agent daily_news
+
+# 查看所有可用的查询
+python scripts/run_agents.py --list
+
+# 验证配置
+python scripts/run_agents.py --validate
 ```
 
-### 方式2: 直接运行主程序
+### 传统单查询模式（已废弃）
 
-```bash
-python src/reporter/main.py
-```
-
-### 自定义查询
-
-你可以传入自定义查询参数：
-
-```bash
-python scripts/run.py "总结今天的科技股新闻"
-```
+新系统支持多个查询任务的并行执行，包括：
+- 每日财经新闻摘要
+- 美股宏观经济因素分析  
+- 未来一周美股风险与机会分析
 
 ## 配置说明
 
@@ -123,18 +130,23 @@ python scripts/run.py "总结今天的科技股新闻"
 
 ## 功能特性
 
+- 🤖 **Agent系统架构**：基于Agent的模块化设计，易于扩展
 - 🔍 **智能搜索**：使用 BochaAI 进行实时网络搜索
 - 🧠 **AI 分析**：使用 DeepSeek 模型进行深度分析  
 - 📱 **智能通知**：支持 Slack Block Kit 和文本格式
-- 🔧 **模块化设计**：易于维护和扩展
+- 🧹 **自动格式清理**：自动去除Markdown格式，优化Slack显示
+- 📄 **统一配置管理**：通过YAML文件管理所有查询任务
+- 🚀 **并行执行**：多个查询同时执行，提高效率
+- 🎯 **多查询支持**：
+  - 每日财经新闻摘要
+  - 美股宏观经济因素分析
+  - 未来一周美股风险与机会分析
 - ⚙️ **环境变量配置**：安全管理敏感信息
-- 🚀 **支持自定义查询**：灵活的搜索参数
 - 📊 **完整的错误处理**：详细的日志输出
 - 🔄 **多种运行方式**：手动、定时、Docker
 - ⏰ **自动定时任务**：每天北京时间上午10点
 - 🐳 **支持 Docker 部署**：容器化部署
 - 🛠️ **一键自动部署脚本**：简化服务器部署
-- 📋 **完整的部署和监控文档**：详细的使用指南
 
 ## 🚀 快速部署到服务器
 

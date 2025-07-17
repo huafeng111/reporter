@@ -50,7 +50,7 @@ echo -e "${YELLOW}更新依赖包...${NC}"
 sudo -u $SERVICE_USER bash -c 'source .venv/bin/activate && ~/.local/bin/uv sync'
 
 echo -e "${YELLOW}测试运行...${NC}"
-if sudo -u $SERVICE_USER bash -c 'source .venv/bin/activate && python scripts/run.py'; then
+if sudo -u $SERVICE_USER bash -c 'source .venv/bin/activate && python scripts/run_agents.py --validate'; then
     echo -e "${GREEN}✅ 更新成功！${NC}"
     echo -e "${GREEN}应用已更新到最新版本${NC}"
     
