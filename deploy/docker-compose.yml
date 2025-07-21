@@ -1,11 +1,11 @@
 version: '3.8'
 
 services:
-  financial-reporter:
+  reporter:
     build:
       context: ..
       dockerfile: deploy/Dockerfile
-    container_name: financial-reporter
+    container_name: reporter
     restart: unless-stopped
     environment:
       # 从 .env 文件加载环境变量
@@ -19,7 +19,7 @@ services:
       - STREAM=${STREAM:-False}
     volumes:
       # 挂载日志目录
-      - ./logs:/var/log/financial-reporter
+      - ./logs:/var/log/reporter
       # 挂载配置文件（如果需要运行时修改）
       - ../.env:/app/.env:ro
     networks:
