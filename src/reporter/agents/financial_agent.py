@@ -103,7 +103,7 @@ class FinancialAgent(BaseAgent):
             if not slack_success:
                 result['error'] = 'Slack发送失败'
             
-            print(f"✅ [{self.agent_name}] 执行{'成功' if slack_success else '失败'}")
+            print(f"✅ [{self.agent_name}] Execution {'successful' if slack_success else 'failed'}")
             return result
             
         except Exception as e:
@@ -169,15 +169,15 @@ class FinancialAgent(BaseAgent):
                             full_document = " | ".join(document_parts)
                             summaries.append(full_document)
                     
-                    print(f"📝 组装完整文档，获得 {len(summaries)} 条内容")
+                    print(f"📝 Assembled complete documents, obtained {len(summaries)} items")
                     
                     # 过滤有效内容
                     valid_summaries = [s for s in summaries if s and len(s.strip()) > 20]
-                    print(f"📝 有效文档内容: {len(valid_summaries)} 条")
+                    print(f"📝 Valid document content: {len(valid_summaries)} items")
                     
                     if valid_summaries:
                         summaries = valid_summaries
-                        print(f"✅ 成功组装 name + snippet + summary")
+                        print(f"✅ Successfully assembled title + description + summary")
                 
                 # 如果没有获取到有效内容，输出调试信息
                 if not summaries:
