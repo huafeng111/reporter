@@ -1,5 +1,5 @@
 # 金融新闻报告器定时任务 - Agent系统
-# 每天北京时间早上8点执行所有查询（UTC 时间 00:00）
-0 0 * * * root cd /app && .venv/bin/python scripts/run_agents.py >> /var/log/financial-reporter/agents.log 2>&1
+# 每天北京时间早上8点执行所有查询
+0 8 * * * root cd /app && .venv/bin/python scripts/run_agents.py >> /var/log/financial-reporter/agents.log 2>&1
 
 # 空行（cron 要求） 

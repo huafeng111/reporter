@@ -111,10 +111,10 @@ mkdir -p /var/log/$PROJECT_NAME
 chown $SERVICE_USER:$SERVICE_USER /var/log/$PROJECT_NAME
 
 echo -e "${YELLOW}设置定时任务...${NC}"
-# 创建 cron 任务 - 每天北京时间上午10点执行（UTC+8，所以 UTC 时间是 02:00）
+# 创建 cron 任务 - 每天北京时间早上8点执行
 cat > /tmp/crontab_tmp << EOF
-# 每天北京时间上午10点执行金融新闻报告 - Agent系统
-0 2 * * * cd $PROJECT_DIR && .venv/bin/python scripts/run_agents.py >> /var/log/$PROJECT_NAME/agents.log 2>&1
+# 每天北京时间早上8点执行金融新闻报告 - Agent系统
+0 8 * * * cd $PROJECT_DIR && .venv/bin/python scripts/run_agents.py >> /var/log/$PROJECT_NAME/agents.log 2>&1
 EOF
 
 # 安装定时任务
@@ -128,7 +128,7 @@ systemctl start cron
 echo -e "${GREEN}✅ 部署完成！${NC}"
 echo -e "${GREEN}项目目录: $PROJECT_DIR${NC}"
 echo -e "${GREEN}日志文件: /var/log/$PROJECT_NAME/agents.log${NC}"
-echo -e "${GREEN}定时任务: 每天北京时间上午10点执行${NC}"
+echo -e "${GREEN}定时任务: 每天北京时间早上8点执行${NC}"
 echo ""
 echo -e "${YELLOW}测试运行:${NC}"
 echo "sudo -u $SERVICE_USER bash -c 'cd $PROJECT_DIR && source .venv/bin/activate && python scripts/run_agents.py'"
