@@ -126,6 +126,7 @@ class FinancialAgent(BaseAgent):
             payload = {
                 'query': query,
                 'freshness': self.freshness,
+                'summary': True,  # 启用摘要功能
                 'count': self.count
             }
             
@@ -143,20 +144,40 @@ class FinancialAgent(BaseAgent):
                 response_data = response.json()
                 summaries = []
                 
-                # 方法1: 使用正确的字段名 - snippet而不是summary
+                # 组装完整文档内容：name + snippet + summary
                 webpages = response_data.get("data", {}).get("webPages", {}).get("value", [])
                 if webpages:
-                    # 使用snippet字段获取内容
-                    summaries = [item.get("snippet", "") for item in webpages]
-                    print(f"📝 使用webPages路径，获得 {len(summaries)} 条内容片段")
+                    # 组装完整文档：标题 + 描述 + 摘要
+                    summaries = []
+                    for item in webpages:
+                        # 提取各个字段
+                        name = item.get("name", "").strip()
+                        snippet = item.get("snippet", "").strip()
+                        summary = item.get("summary", "").strip()
+                        
+                        # 组装完整文档内容
+                        document_parts = []
+                        if name:
+                            document_parts.append(f"标题: {name}")
+                        if snippet:
+                            document_parts.append(f"描述: {snippet}")
+                        if summary:
+                            document_parts.append(f"摘要: {summary}")
+                        
+                        # 合并成完整文档
+                        if document_parts:
+                            full_document = " | ".join(document_parts)
+                            summaries.append(full_document)
+                    
+                    print(f"📝 组装完整文档，获得 {len(summaries)} 条内容")
                     
                     # 过滤有效内容
-                    valid_summaries = [s for s in summaries if s and len(s.strip()) > 10]
-                    print(f"📝 有效内容片段: {len(valid_summaries)} 条")
+                    valid_summaries = [s for s in summaries if s and len(s.strip()) > 20]
+                    print(f"📝 有效文档内容: {len(valid_summaries)} 条")
                     
                     if valid_summaries:
                         summaries = valid_summaries
-                        print(f"✅ 使用snippet字段成功获取内容")
+                        print(f"✅ 成功组装 name + snippet + summary")
                 
                 # 如果没有获取到有效内容，输出调试信息
                 if not summaries:
@@ -205,7 +226,8 @@ class FinancialAgent(BaseAgent):
                 return documents
             
             print(f"🔄 正在使用rerank API过滤文档...")
-            print(f"📊 原始文档数量: {len(documents)}")
+            print(f"📊 原始完整文档数量: {len(documents)}")
+            print(f"📋 文档内容包含: 标题 + 描述 + 摘要")
             
             headers = {
                 'Authorization': f'Bearer {self.base_config.bochaai_api_key}',

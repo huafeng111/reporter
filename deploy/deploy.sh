@@ -79,25 +79,31 @@ EOF
 
 echo -e "${YELLOW}创建环境变量文件...${NC}"
 if [[ ! -f "$PROJECT_DIR/.env" ]]; then
-    echo "请输入您的 API Key:"
-    read -r API_KEY
+    echo "请输入您的 BochaAI API Key:"
+    read -r BOCHAAI_API_KEY
+    echo "请输入您的 DeepSeek API Key:"
+    read -r DEEPSEEK_API_KEY
     echo "请输入您的 Slack Webhook URL:"
     read -r SLACK_WEBHOOK_URL
     
     cat > "$PROJECT_DIR/.env" << EOF
-# AI API 配置
-AI_URL=https://api.bochaai.com/v1/ai-search
-API_KEY=$API_KEY
+# BochaAI 搜索 API 配置
+BOCHAAI_SEARCH_URL=https://api.bochaai.com/v1/web-search
+BOCHAAI_API_KEY=$BOCHAAI_API_KEY
+
+# DeepSeek 分析 API 配置  
+DEEPSEEK_API_KEY=$DEEPSEEK_API_KEY
+DEEPSEEK_BASE_URL=https://api.deepseek.com
+DEEPSEEK_MODEL=deepseek-reasoner
 
 # Slack 配置
 SLACK_WEBHOOK_URL=$SLACK_WEBHOOK_URL
+USE_SLACK_BLOCKS=True
 
-# AI 请求配置
+# 搜索配置
 DEFAULT_QUERY=总结昨天的美股金融财经新闻
-FRESHNESS=oneDay
+FRESHNESS=day
 COUNT=50
-ANSWER=True
-STREAM=False
 EOF
     chown $SERVICE_USER:$SERVICE_USER "$PROJECT_DIR/.env"
     chmod 600 "$PROJECT_DIR/.env"
