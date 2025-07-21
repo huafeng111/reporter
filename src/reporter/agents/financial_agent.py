@@ -166,6 +166,11 @@ class FinancialAgent(BaseAgent):
                 
                 # 最终过滤，确保内容质量
                 summaries = [s for s in summaries if s and len(s.strip()) > 10]
+                
+                # 如果有搜索结果，使用rerank API过滤
+                if summaries:
+                    summaries = self._rerank_documents(query, summaries)
+                
                 context = " ".join(summaries)
                 
                 print(f"✅ 搜索成功，获得 {len(summaries)} 条有效结果")
@@ -183,6 +188,76 @@ class FinancialAgent(BaseAgent):
         except Exception as e:
             print(f"❌ BochaAI搜索异常: {str(e)}")
             return None
+    
+    def _rerank_documents(self, query: str, documents: list) -> list:
+        """
+        使用BochaAI rerank API过滤低相关性文档
+        
+        Args:
+            query: 查询内容
+            documents: 原始文档列表
+            
+        Returns:
+            过滤后的高相关性文档列表
+        """
+        try:
+            if not documents:
+                return documents
+            
+            print(f"🔄 正在使用rerank API过滤文档...")
+            print(f"📊 原始文档数量: {len(documents)}")
+            
+            headers = {
+                'Authorization': f'Bearer {self.base_config.bochaai_api_key}',
+                'Content-Type': 'application/json'
+            }
+            
+            rerank_data = {
+                "model": "gte-rerank",
+                "query": query,
+                "documents": documents,
+                "top_n": len(documents),
+                "return_documents": True
+            }
+            
+            response = requests.post(
+                'https://api.bochaai.com/v1/rerank',
+                headers=headers,
+                data=json.dumps(rerank_data),
+                timeout=30
+            )
+            
+            if response.status_code == 200:
+                rerank_results = response.json()
+                
+                # 过滤相关性分数 > 0.5 的文档
+                high_quality_docs = []
+                filtered_count = 0
+                
+                for item in rerank_results['data']['results']:
+                    relevance_score = item['relevance_score']
+                    document_text = item['document']['text']
+                    
+                    if relevance_score > 0.5:
+                        high_quality_docs.append(document_text)
+                        print(f"✅ 保留文档 (相关性: {relevance_score:.3f})")
+                    else:
+                        filtered_count += 1
+                        print(f"🗑️  过滤文档 (相关性: {relevance_score:.3f})")
+                
+                print(f"📈 Rerank完成: 保留 {len(high_quality_docs)} 条, 过滤 {filtered_count} 条")
+                print(f"✨ 平均相关性提升: 保留文档质量更高")
+                
+                return high_quality_docs if high_quality_docs else documents[:5]  # 如果全部被过滤，保留前5条
+            else:
+                print(f"❌ Rerank API失败，状态码: {response.status_code}")
+                print(f"⚠️  使用原始文档: {response.text}")
+                return documents
+                
+        except Exception as e:
+            print(f"❌ Rerank API异常: {str(e)}")
+            print(f"⚠️  使用原始文档")
+            return documents
     
     def _analyze_with_deepseek(self, context: str, query: str) -> Optional[str]:
         """使用DeepSeek分析"""
