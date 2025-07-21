@@ -52,10 +52,9 @@ class FinancialAgent(BaseAgent):
     
     def _setup_slack_service(self):
         """设置Slack服务"""
-        # 创建专用的Slack服务实例
+        # 创建专用的Slack服务实例，直接从环境变量/.env获取配置
         slack_config = Config()
-        slack_config.slack_webhook_url = self.slack_webhook_url
-        slack_config.use_slack_blocks = self.use_slack_blocks
+        # 完全忽略tasks.yaml中的配置，只使用环境变量
         self.slack_service = SlackService(slack_config)
     
     def execute(self, **kwargs) -> Dict[str, Any]:
