@@ -10,11 +10,11 @@
 
 ```bash
 # 1. 上传项目到服务器
-scp -r . user@your-server:/tmp/financial-reporter
+scp -r . user@your-server:/tmp/reporter
 
 # 2. 登录服务器并运行部署脚本
 ssh user@your-server
-cd /tmp/financial-reporter
+cd /tmp/reporter
 sudo bash deploy/deploy.sh
 ```
 
@@ -55,16 +55,16 @@ docker-compose logs -f
 ### 直接部署方式
 ```bash
 # 查看实时日志
-tail -f /var/log/financial-reporter/daily.log
+tail -f /var/log/reporter/agents.log
 
 # 查看历史日志
-cat /var/log/financial-reporter/daily.log
+cat /var/log/reporter/agents.log
 ```
 
 ### Docker 部署方式
 ```bash
 # 查看容器日志
-docker-compose logs financial-reporter
+docker-compose logs reporter
 
 # 查看日志文件
 cat ./logs/daily.log
@@ -79,7 +79,7 @@ cat ./logs/daily.log
 crontab -u reporter -l
 
 # 手动执行任务
-sudo -u reporter bash -c 'cd /opt/financial-reporter && source .venv/bin/activate && python scripts/run.py'
+sudo -u reporter bash -c 'cd /opt/reporter && source .venv/bin/activate && python scripts/run_agents.py'
 
 # 编辑定时任务
 crontab -u reporter -e
@@ -103,7 +103,7 @@ docker-compose build --no-cache
 docker-compose up -d
 
 # 手动执行任务
-docker-compose exec financial-reporter /app/.venv/bin/python /app/scripts/run.py
+docker-compose exec reporter /app/.venv/bin/python /app/scripts/run_agents.py
 ```
 
 ## 故障排查
@@ -111,7 +111,7 @@ docker-compose exec financial-reporter /app/.venv/bin/python /app/scripts/run.py
 ### 1. 检查定时任务是否运行
 ```bash
 # 直接部署
-grep "financial-reporter" /var/log/syslog
+grep "reporter" /var/log/syslog
 
 # Docker 部署
 docker-compose logs | grep -i error
@@ -129,10 +129,10 @@ curl -X POST -H 'Content-type: application/json' --data '{"text":"测试消息"}
 ### 3. 手动测试
 ```bash
 # 直接部署
-sudo -u reporter bash -c 'cd /opt/financial-reporter && source .venv/bin/activate && python scripts/run.py'
+sudo -u reporter bash -c 'cd /opt/reporter && source .venv/bin/activate && python scripts/run_agents.py'
 
 # Docker 部署
-docker-compose exec financial-reporter /app/.venv/bin/python /app/scripts/run.py
+docker-compose exec reporter /app/.venv/bin/python /app/scripts/run_agents.py
 ```
 
 ## 安全注意事项
@@ -147,7 +147,7 @@ docker-compose exec financial-reporter /app/.venv/bin/python /app/scripts/run.py
 ### 直接部署方式
 ```bash
 # 1. 备份当前版本
-sudo cp -r /opt/financial-reporter /opt/financial-reporter.backup
+sudo cp -r /opt/reporter /opt/reporter.backup
 
 # 2. 上传新版本并重新部署
 # ... 按照部署步骤操作

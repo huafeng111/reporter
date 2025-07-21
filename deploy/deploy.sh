@@ -14,7 +14,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # 项目配置
-PROJECT_NAME="financial-reporter"
+PROJECT_NAME="reporter"
 PROJECT_DIR="/opt/${PROJECT_NAME}"
 SERVICE_USER="reporter"
 PYTHON_VERSION="3.11"

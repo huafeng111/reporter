@@ -24,12 +24,12 @@ RUN uv venv && \
     uv sync
 
 # 创建日志目录
-RUN mkdir -p /var/log/financial-reporter
+RUN mkdir -p /var/log/reporter
 
 # 复制定时任务配置
-COPY deploy/crontab /etc/cron.d/financial-reporter
-RUN chmod 0644 /etc/cron.d/financial-reporter && \
-    crontab /etc/cron.d/financial-reporter
+COPY deploy/crontab /etc/cron.d/reporter
+RUN chmod 0644 /etc/cron.d/reporter && \
+    crontab /etc/cron.d/reporter
 
 # 创建启动脚本
 RUN cat > /start.sh << 'EOF'
@@ -37,13 +37,13 @@ RUN cat > /start.sh << 'EOF'
 # 启动 cron 服务
 service cron start
 # 保持容器运行
-tail -f /var/log/financial-reporter/daily.log
+tail -f /var/log/reporter/agents.log
 EOF
 
 RUN chmod +x /start.sh
 
 # 暴露日志目录作为数据卷
-VOLUME ["/var/log/financial-reporter"]
+VOLUME ["/var/log/reporter"]
 
 # 启动容器
 CMD ["/start.sh"] 

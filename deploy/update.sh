@@ -14,7 +14,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # 项目配置
-PROJECT_NAME="financial-reporter"
+PROJECT_NAME="reporter"
 PROJECT_DIR="/opt/${PROJECT_NAME}"
 SERVICE_USER="reporter"
 
@@ -76,7 +76,7 @@ else
 fi
 
 echo -e "${GREEN}定时任务状态:${NC}"
-if crontab -u $SERVICE_USER -l 2>/dev/null | grep -q "financial-reporter"; then
+if crontab -u $SERVICE_USER -l 2>/dev/null | grep -q "reporter"; then
     echo -e "${GREEN}✅ 定时任务正常运行${NC}"
 else
     echo -e "${YELLOW}⚠️  定时任务可能需要重新设置${NC}"
