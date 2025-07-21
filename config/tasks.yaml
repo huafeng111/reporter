@@ -10,7 +10,7 @@ global:
 # 定时任务列表
 tasks:
   - id: "daily_news"
-    name: "每日财经新闻摘要"
+    name: "Daily Financial News Summary"
     query: "总结昨天的美股金融财经新闻"
     schedule: "0 8 * * *"  # 每天北京时间8点（早上8点）
     freshness: "day"
@@ -19,7 +19,7 @@ tasks:
     analysis_prompt: "请总结和分析以下美股财经新闻，重点关注市场动态、重要公司公告、政策影响等关键信息。Output in English."
     
   - id: "macro_factors"
-    name: "美股宏观经济因素分析"
+    name: "US Stock Macroeconomic Factors Analysis"
     query: "当前影响美股市场的宏观经济因素分析"
     schedule: "0 8 * * *"  # 每天北京时间8点（早上8点）
     freshness: "day"
@@ -28,7 +28,7 @@ tasks:
     analysis_prompt: "请从宏观经济角度分析以下信息，重点关注对美股市场的影响，包括利率、通胀、GDP、就业数据、政策变化等关键因素。Output in English."
     
   - id: "weekly_outlook"
-    name: "未来一周美股风险与机会"
+    name: "Weekly US Stock Risks & Opportunities"
     query: "未来一周美股市场风险与机会分析 财报季 经济数据 政策预期"
     schedule: "0 8 * * 1"  # 每周一北京时间8点（早上8点）
     freshness: "day"
