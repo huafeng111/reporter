@@ -33,10 +33,7 @@ class BaseAgent(ABC):
         self._validate_config()
     
     def _resolve_env_var(self, value: str) -> str:
-        """解析环境变量"""
-        if isinstance(value, str) and value.startswith('${') and value.endswith('}'):
-            env_var = value[2:-1]
-            return os.getenv(env_var, value)
+        """不再解析环境变量，直接返回配置值"""
         return value
     
     def _validate_config(self) -> None:
@@ -47,14 +44,12 @@ class BaseAgent(ABC):
         if not self.query:
             raise ValueError(f"Agent '{self.agent_id}': 查询内容不能为空")
         
-        # Slack配置从环境变量验证，不再验证tasks.yaml中的配置
-        import os
-        slack_webhook = os.getenv('SLACK_WEBHOOK_URL')
-        if not slack_webhook:
-            raise ValueError(f"Agent '{self.agent_id}': 缺少 SLACK_WEBHOOK_URL 环境变量")
+        # 验证Slack配置 - 只使用YAML文件中的配置
+        if not self.slack_webhook_url:
+            raise ValueError(f"Agent '{self.agent_id}': 缺少 slack_webhook_url 配置")
         
-        if not slack_webhook.startswith('https://hooks.slack.com/'):
-            raise ValueError(f"Agent '{self.agent_id}': SLACK_WEBHOOK_URL 环境变量格式无效")
+        if not self.slack_webhook_url.startswith('https://hooks.slack.com/'):
+            raise ValueError(f"Agent '{self.agent_id}': slack_webhook_url 格式无效，必须是Slack webhook URL")
         
         # 调用子类的验证方法
         self._validate_agent_config()

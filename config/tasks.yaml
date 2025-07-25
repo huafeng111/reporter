@@ -3,7 +3,7 @@ description: "统一的财经新闻分析任务配置"
 
 # 全局配置
 global:
-  slack_webhook_url: "https://hooks.slack.com/services/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"
+  slack_webhook_url: "https://hooks.slack.com/services/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"
   use_slack_blocks: false
   agent_type: "financial"
 
