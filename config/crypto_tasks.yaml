@@ -3,7 +3,7 @@ description: "加密货币市场分析任务配置"
 
 # 全局配置x
 global:
-  slack_webhook_url: "https://hooks.slack.com/services/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"
+  slack_webhook_url: "https://hooks.slack.com/services/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"
   use_slack_blocks: false
   agent_type: "financial"
 
