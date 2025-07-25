@@ -1,0 +1,19 @@
+version: "1.0"
+description: "加密货币市场分析任务配置"
+
+# 全局配置
+global:
+  slack_webhook_url: "https://hooks.slack.com/services/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"
+  use_slack_blocks: false
+  agent_type: "financial"
+
+# 定时任务列表
+tasks:
+  - id: "daily_crypto_news"
+    name: "每日加密货币市场新闻摘要"
+    query: "加密货币市场每日新闻摘要"
+    schedule: "10 8 * * *"  # 每天北京时间8点10分（早上8点10分）
+    freshness: "day"
+    count: 50
+    enabled: true
+    analysis_prompt: "请总结和分析以下加密货币市场新闻，重点关注主要币种价格动态、重要项目进展、政策法规变化、技术发展和市场趋势等关键信息。请用中文输出。" 
