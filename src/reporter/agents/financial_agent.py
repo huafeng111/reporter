@@ -52,16 +52,12 @@ class FinancialAgent(BaseAgent):
     
     def _setup_slack_service(self):
         """设置Slack服务"""
-        # 创建专用的Slack服务实例，优先使用任务配置中的webhook
+        # 创建专用的Slack服务实例，完全使用YAML配置文件中的设置
         slack_config = Config()
         
-        # 如果任务配置中有webhook，使用任务的webhook覆盖默认配置
-        if hasattr(self, 'slack_webhook_url') and self.slack_webhook_url:
-            slack_config.slack_webhook_url = self.slack_webhook_url
-        
-        # 如果任务配置中有use_slack_blocks设置，也使用任务的设置
-        if hasattr(self, 'use_slack_blocks'):
-            slack_config.use_slack_blocks = self.use_slack_blocks
+        # 使用YAML任务配置中的webhook，不使用环境变量
+        slack_config.slack_webhook_url = self.slack_webhook_url
+        slack_config.use_slack_blocks = self.use_slack_blocks
         
         self.slack_service = SlackService(slack_config)
     
