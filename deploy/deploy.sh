@@ -116,16 +116,19 @@ echo -e "${YELLOW}创建日志目录...${NC}"
 mkdir -p /var/log/$PROJECT_NAME
 chown $SERVICE_USER:$SERVICE_USER /var/log/$PROJECT_NAME
 
-echo -e "${YELLOW}设置定时任务...${NC}"
-# 创建 cron 任务 - 每天北京时间早上8点执行
-cat > /tmp/crontab_tmp << EOF
-# 每天北京时间早上8点执行金融新闻报告 - Agent系统
-0 8 * * * cd $PROJECT_DIR && .venv/bin/python scripts/run_agents.py >> /var/log/$PROJECT_NAME/agents.log 2>&1
-EOF
+echo -e "${YELLOW}设置智能调度系统...${NC}"
+# 使用项目中的 crontab 配置文件
+cp "$PROJECT_DIR/deploy/crontab" /tmp/crontab_tmp
+
+# 替换路径变量
+sed -i "s|/app|$PROJECT_DIR|g" /tmp/crontab_tmp
+sed -i "s|/var/log/reporter|/var/log/$PROJECT_NAME|g" /tmp/crontab_tmp
 
 # 安装定时任务
 crontab -u $SERVICE_USER /tmp/crontab_tmp
 rm -f /tmp/crontab_tmp
+
+echo -e "${GREEN}智能调度系统已安装${NC}"
 
 echo -e "${YELLOW}启动 cron 服务...${NC}"
 systemctl enable cron
@@ -133,14 +136,23 @@ systemctl start cron
 
 echo -e "${GREEN}✅ 部署完成！${NC}"
 echo -e "${GREEN}项目目录: $PROJECT_DIR${NC}"
-echo -e "${GREEN}日志文件: /var/log/$PROJECT_NAME/agents.log${NC}"
-echo -e "${GREEN}定时任务: 每天北京时间早上8点执行${NC}"
+echo -e "${GREEN}日志文件: /var/log/$PROJECT_NAME/scheduler.log${NC}"
+echo -e "${GREEN}智能调度: 每分钟检查配置文件中的任务时间表${NC}"
 echo ""
-echo -e "${YELLOW}测试运行:${NC}"
-echo "sudo -u $SERVICE_USER bash -c 'cd $PROJECT_DIR && source .venv/bin/activate && python scripts/run_agents.py'"
+echo -e "${YELLOW}当前任务调度安排:${NC}"
+echo "  • 8:00 - 每日美股财经新闻总结"
+echo "  • 8:05 - 美股宏观经济因素分析"
+echo "  • 8:10 - 每日加密货币市场新闻摘要"
+echo "  • 每周一8:00 - 每周美股风险与机会分析"
 echo ""
-echo -e "${YELLOW}查看日志:${NC}"
-echo "tail -f /var/log/$PROJECT_NAME/agents.log"
+echo -e "${YELLOW}测试智能调度器:${NC}"
+echo "sudo -u $SERVICE_USER bash -c 'cd $PROJECT_DIR && source .venv/bin/activate && python scripts/run_scheduler.py'"
+echo ""
+echo -e "${YELLOW}测试单个配置文件:${NC}"
+echo "sudo -u $SERVICE_USER bash -c 'cd $PROJECT_DIR && source .venv/bin/activate && python scripts/run_agents.py --config config/crypto_tasks.yaml'"
+echo ""
+echo -e "${YELLOW}查看调度日志:${NC}"
+echo "tail -f /var/log/$PROJECT_NAME/scheduler.log"
 echo ""
 echo -e "${YELLOW}查看定时任务:${NC}"
 echo "crontab -u $SERVICE_USER -l" 
