@@ -21,7 +21,7 @@ tasks:
   - id: "macro_factors"
     name: "美股宏观经济因素分析"
     query: "当前影响美股市场的宏观经济因素分析"
-    schedule: "0 8 * * *"  # 每天北京时间8点（早上8点）
+    schedule: "5 8 * * *"  # 每天北京时间8点05分（错开避免冲突）
     freshness: "day"
     count: 50
     enabled: true

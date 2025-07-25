@@ -52,9 +52,17 @@ class FinancialAgent(BaseAgent):
     
     def _setup_slack_service(self):
         """设置Slack服务"""
-        # 创建专用的Slack服务实例，直接从环境变量/.env获取配置
+        # 创建专用的Slack服务实例，优先使用任务配置中的webhook
         slack_config = Config()
-        # 完全忽略tasks.yaml中的配置，只使用环境变量
+        
+        # 如果任务配置中有webhook，使用任务的webhook覆盖默认配置
+        if hasattr(self, 'slack_webhook_url') and self.slack_webhook_url:
+            slack_config.slack_webhook_url = self.slack_webhook_url
+        
+        # 如果任务配置中有use_slack_blocks设置，也使用任务的设置
+        if hasattr(self, 'use_slack_blocks'):
+            slack_config.use_slack_blocks = self.use_slack_blocks
+        
         self.slack_service = SlackService(slack_config)
     
     def execute(self, **kwargs) -> Dict[str, Any]:
@@ -90,7 +98,7 @@ class FinancialAgent(BaseAgent):
                 }
             
             # 步骤3: 发送到Slack
-            slack_success = self.slack_service.send_message(analysis_content, self.agent_name)
+            slack_success = self.slack_service.send_message(analysis_content, self.agent_name, self.query)
             
             result = {
                 'success': slack_success,
