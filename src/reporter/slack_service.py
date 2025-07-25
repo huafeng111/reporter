@@ -10,7 +10,7 @@ class SlackService:
     def __init__(self, config: Config):
         self.config = config
     
-    def send_message(self, content: str, prefix: str = "AI分析报告") -> bool:
+    def send_message(self, content: str, prefix: str = "AI分析报告", query: str = None) -> bool:
         """
         发送分析报告到Slack（支持Block Kit和简单文本两种格式）
         
@@ -23,6 +23,7 @@ class SlackService:
         """
         try:
             current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            display_query = query or getattr(self.config, 'default_query', 'N/A')
             
             if self.config.use_slack_blocks:
                 # 使用 Slack Block Kit 格式（更美观）
@@ -44,7 +45,7 @@ class SlackService:
                                 },
                                 {
                                     "type": "mrkdwn",
-                                    "text": f"*🔍 Query Content:*\n{self.config.default_query}"
+                                    "text": f"*🔍 Query Content:*\n{display_query}"
                                 }
                             ]
                         },
@@ -77,7 +78,7 @@ class SlackService:
                 slack_message = f"""🤖 {prefix}
 
 📅 Generated Time: {current_time}
-🔍 Query Content: {self.config.default_query}
+🔍 Query Content: {display_query}
 
 📊 Analysis Result:
 {content}
