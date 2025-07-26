@@ -1,5 +1,5 @@
 # 金融新闻报告器智能调度系统
 # 每分钟检查所有配置文件中的任务schedule，自动运行到期任务
-* * * * * root cd /app && .venv/bin/python scripts/run_scheduler.py >> /var/log/reporter/scheduler.log 2>&1
+* * * * * cd /app && .venv/bin/python scripts/run_scheduler.py >> /var/log/reporter/scheduler.log 2>&1
 
 # 空行（cron 要求） 

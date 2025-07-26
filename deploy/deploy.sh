@@ -115,6 +115,7 @@ fi
 echo -e "${YELLOW}创建日志目录...${NC}"
 mkdir -p /var/log/$PROJECT_NAME
 chown $SERVICE_USER:$SERVICE_USER /var/log/$PROJECT_NAME
+chmod 755 /var/log/$PROJECT_NAME
 
 echo -e "${YELLOW}设置智能调度系统...${NC}"
 # 使用项目中的 crontab 配置文件
@@ -124,9 +125,18 @@ cp "$PROJECT_DIR/deploy/crontab" /tmp/crontab_tmp
 sed -i "s|/app|$PROJECT_DIR|g" /tmp/crontab_tmp
 sed -i "s|/var/log/reporter|/var/log/$PROJECT_NAME|g" /tmp/crontab_tmp
 
-# 安装定时任务
-crontab -u $SERVICE_USER /tmp/crontab_tmp
+# 安装定时任务到指定用户
+sudo -u $SERVICE_USER crontab /tmp/crontab_tmp
 rm -f /tmp/crontab_tmp
+
+# 验证crontab安装
+echo -e "${GREEN}验证crontab安装...${NC}"
+echo "当前crontab内容:"
+sudo -u $SERVICE_USER crontab -l
+
+# 手动运行一次调度器来初始化日志文件
+echo -e "${YELLOW}初始化调度器日志...${NC}"
+sudo -u $SERVICE_USER bash -c "cd $PROJECT_DIR && source .venv/bin/activate && python scripts/run_scheduler.py >> /var/log/$PROJECT_NAME/scheduler.log 2>&1"
 
 echo -e "${GREEN}智能调度系统已安装${NC}"
 
